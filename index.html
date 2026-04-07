@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>STOCK ADMIN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg: #0a0a0a;
+            --surface: #141414;
+            --surface-light: #1f1f1f;
+            --text: #fafafa;
+            --text-muted: #a3a3a3;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem;
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            color: var(--primary);
+        }
+
+        .nav-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.92);
+        }
+
+        .nav-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Search */
+        .search-box {
+            padding: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 2.75rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            color: var(--text);
+            font-size: 0.9375rem;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--surface-light);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem 6rem;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Card */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            will-change: transform;
+        }
+
+        .card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .card-img-wrap {
+            position: relative;
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .card:hover .card-img {
+            transform: scale(1.05);
+        }
+
+        .card-body {
+            padding: 1.25rem;
+        }
+
+        .card-title {
+            font-size: 1.0625rem;
+            font-weight: 600;
+            margin-bottom: 0.375rem;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-desc {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.5;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .price {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .stock {
+            font-size: 0.75rem;
+            padding: 0.375rem 0.875rem;
+            border-radius: 20px;
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .stock.low {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .stock.empty {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        /* WhatsApp Button */
+        .wa-btn {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .wa-btn:active {
+            transform: scale(0.98);
+        }
+
+        .wa-btn i {
+            font-size: 1.125rem;
+        }
+
+        /* Admin Actions */
+        .card-actions {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            display: flex;
+            gap: 0.5rem;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+        }
+
+        .card:hover .card-actions {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:active {
+            transform: scale(0.9);
+        }
+
+        .action-btn.delete {
+            background: rgba(239, 68, 68, 0.9);
+        }
+
+        .action-btn.edit {
+            background: rgba(245, 158, 11, 0.9);
+        }
+
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4), 0 0 0 1px rgba(255,255,255,0.1) inset;
+            z-index: 50;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fab.show {
+            display: flex;
+            animation: fabIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fabIn {
+            from { transform: scale(0) rotate(-180deg); opacity: 0; }
+            to { transform: scale(1) rotate(0); opacity: 1; }
+        }
+
+        .fab:active {
+            transform: scale(0.9);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 200;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            border-radius: 24px 24px 0 0;
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            border-top: 1px solid var(--border);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--surface);
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: none;
+            background: var(--surface-light);
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:active {
+            background: var(--danger);
+        }
+
+        .modal-body {
+            padding: 1.25rem;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 0.9375rem;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--surface-light);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+            background: var(--primary-dark);
+        }
+
+        /* Image Upload Styles */
+        .upload-container {
+            position: relative;
+            margin-bottom: 1.25rem;
+        }
+
+        .upload-box {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .upload-box:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .upload-box.has-image {
+            border-style: solid;
+            border-color: var(--success);
+        }
+
+        .upload-box i {
+            font-size: 2.5rem;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .upload-box:hover i {
+            color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .upload-text {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .upload-text span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .upload-preview {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .upload-preview.show {
+            display: block;
+        }
+
+        .upload-remove {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+        }
+
+        .upload-remove.show {
+            display: flex;
+        }
+
+        .upload-or {
+            text-align: center;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .upload-or::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .upload-or span {
+            background: var(--surface);
+            padding: 0 1rem;
+            position: relative;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        /* Password Modal */
+        .pw-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 300;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .pw-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .pw-box {
+            background: var(--surface);
+            padding: 2.5rem 2rem;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 340px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .pw-modal.active .pw-box {
+            transform: scale(1);
+        }
+
+        .pw-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.75rem;
+            color: white;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .pw-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .pw-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .pw-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            color: var(--text);
+            font-size: 1.125rem;
+            text-align: center;
+            letter-spacing: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .pw-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .pw-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pw-btn:active {
+            transform: scale(0.98);
+            background: var(--primary-dark);
+        }
+
+        .pw-error {
+            color: var(--danger);
+            font-size: 0.875rem;
+            margin-top: 0.75rem;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.2s;
+        }
+
+        .pw-error.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Confirm Modal */
+        .confirm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 400;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .confirm-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .confirm-box {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 320px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transform: scale(0.9);
+            transition: transform 0.2s ease;
+        }
+
+        .confirm-modal.active .confirm-box {
+            transform: scale(1);
+        }
+
+        .confirm-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: var(--danger);
+        }
+
+        .confirm-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .confirm-text {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+          .confirm-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .confirm-btn {
+            flex: 1;
+            padding: 0.875rem;
+            border-radius: 12px;
+            border: none;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .confirm-btn.cancel {
+            background: var(--surface-light);
+            color: var(--text);
+        }
+
+        .confirm-btn.cancel:active {
+            background: var(--border);
+        }
+
+        .confirm-btn.delete {
+            background: var(--danger);
+            color: white;
+        }
+
+        .confirm-btn.delete:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--surface);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            z-index: 500;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast i {
+            font-size: 1.125rem;
+        }
+
+        .toast.success { border-left: 3px solid var(--success); }
+        .toast.error { border-left: 3px solid var(--danger); }
+        .toast.info { border-left: 3px solid var(--primary); }
+
+        /* Empty */
+        .empty {
+            text-align: center;
+            padding: 5rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.3;
+        }
+
+        .empty p {
+            font-size: 1rem;
+        }
+
+        /* Mobile */
+        @media (max-width: 640px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card-img-wrap {
+                height: 220px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .card-actions {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .modal-content::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <i class="fas fa-layer-group"></i>
+                <span>STOCK</span>
+            </div>
+            <button class="nav-btn" id="adminBtn" onclick="toggleAdmin()">
+                <i class="fas fa-user"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Search -->
+    <div class="search-box">
+        <div class="search-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" id="searchInput" placeholder="Cari stock..." oninput="renderStocks()">
+        </div>
+    </div>
+
+    <!-- Main -->
+    <main class="container">
+        <div class="grid" id="stockGrid"></div>
+        <div class="empty" id="emptyState" style="display: none;">
+            <i class="fas fa-box-open"></i>
+            <p>Belum ada stock tersedia</p>
+        </div>
+    </main>
+
+    <!-- FAB Add -->
+    <button class="fab" id="fabAdd" onclick="openStockModal()">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Stock Modal -->
+    <div class="modal-overlay" id="stockModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Tambah Stock</h3>
+                <button class="modal-close" onclick="closeStockModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="stockForm" onsubmit="saveStock(event)">
+                    
+                    <!-- Image Upload -->
+                    <div class="upload-container">
+                        <label class="form-label">Foto Produk</label>
+                        <div class="upload-box" id="uploadBox" onclick="document.getElementById('fileInput').click()">
+                            <img src="" class="upload-preview" id="uploadPreview">
+                            <button type="button" class="upload-remove" id="uploadRemove" onclick="event.stopPropagation(); removeImage()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <div class="upload-text">
+                                Klik untuk pilih foto<br>dari <span>Galeri</span>
+                            </div>
+                        </div>
+                        <input type="file" class="file-input" id="fileInput" accept="image/*" onchange="handleFileSelect(event)">
+                        
+                        <div class="upload-or">
+                            <span>atau</span>
+                        </div>
+                        
+                        <input type="url" class="form-input" id="itemImage" placeholder="Paste link gambar (opsional)">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Nama Item</label>
+                        <input type="text" class="form-input" id="itemName" required placeholder="Contoh: AKUN MOBILE LEGENDS">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Harga (Rp)</label>
+                            <input type="number" class="form-input" id="itemPrice" required placeholder="15000">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Stock</label>
+                            <input type="number" class="form-input" id="itemStock" required placeholder="10">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Deskripsi</label>
+                        <textarea class="form-textarea" id="itemDesc" placeholder="Jelaskan detail produk..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Nomor WhatsApp</label>
+                        <input type="tel" class="form-input" id="itemWA" placeholder="6281234567890" required>
+                        <small style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.25rem; display: block;">
+                            Format: 628xxxxxxxxxx (tanpa spasi/tanda)
+                        </small>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Simpan Stock</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div class="pw-modal" id="pwModal">
+        <div class="pw-box">
+            <div class="pw-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <div class="pw-title">Akses Terkunci</div>
+            <div class="pw-subtitle">Masukkan kode untuk melanjutkan</div>
+            <input type="password" class="pw-input" id="pwInput" placeholder="••••••" maxlength="20">
+            <button class="pw-btn" onclick="checkPw()">Buka Kunci</button>
+            <div class="pw-error" id="pwError">Kode tidak valid</div>
+        </div>
+    </div>
+
+    <!-- Custom Confirm Delete -->
+    <div class="confirm-modal" id="confirmModal">
+        <div class="confirm-box">
+            <div class="confirm-icon">
+                <i class="fas fa-trash-alt"></i>
+            </div>
+            <div class="confirm-title">Hapus Stock?</div>
+            <div class="confirm-text">Stock yang dihapus tidak dapat dikembalikan</div>
+            <div class="confirm-actions">
+                <button class="confirm-btn cancel" onclick="closeConfirm()">Batal</button>
+                <button class="confirm-btn delete" onclick="confirmDelete()">Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Data
+        let stocks = JSON.parse(localStorage.getItem('stocks')) || [];
+        let isAdmin = false;
+        let editingId = null;
+        let deleteId = null;
+        let currentImageBase64 = null;
+
+        // Render
+        function renderStocks() {
+            const grid = document.getElementById('stockGrid');
+            const empty = document.getElementById('emptyState');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            const filtered = stocks.filter(s => 
+                s.name.toLowerCase().includes(search) || 
+                s.desc.toLowerCase().includes(search)
+            );
+
+            if (filtered.length === 0) {
+                grid.style.display = 'none';
+                empty.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            empty.style.display = 'none';
+
+            grid.innerHTML = filtered.map(s => {
+                const waLink = `https://wa.me/${s.wa}?text=Halo, saya tertarik dengan ${encodeURIComponent(s.name)}`;
+                return `
+                <div class="card" data-id="${s.id}">
+                    <div class="card-img-wrap">
+                        <img src="${s.image}" class="card-img" alt="${s.name}" loading="lazy">
+                        ${isAdmin ? `
+                            <div class="card-actions">
+                                <button class="action-btn edit" onclick="event.stopPropagation(); editStock(${s.id})">
+                                    <i class="fas fa-pen"></i>
+                                </button>
+                                <button class="action-btn delete" onclick="event.stopPropagation(); showConfirm(${s.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">${s.name}</h3>
+                        <p class="card-desc">${s.desc}</p>
+                        <div class="card-footer">
+                            <span class="price">Rp ${s.price.toLocaleString('id-ID')}</span>
+                            <span class="stock ${s.stock === 0 ? 'empty' : s.stock < 10 ? 'low' : ''}">
+                                ${s.stock} tersedia
+                            </span>
+                        </div>
+                        <a href="${waLink}" target="_blank" class="wa-btn" onclick="event.stopPropagation()">
+                            <i class="fab fa-whatsapp"></i>
+                            <span>Hubungi Penjual</span>
+                        </a>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        // Image Upload Functions
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('Foto terlalu besar (max 2MB)', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                currentImageBase64 = e.target.result;
+                showPreview(currentImageBase64);
+                document.getElementById('itemImage').value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function showPreview(src) {
+            const preview = document.getElementById('uploadPreview');
+            const removeBtn = document.getElementById('uploadRemove');
+            const uploadBox = document.getElementById('uploadBox');
+            
+            preview.src = src;
+            preview.classList.add('show');
+            removeBtn.classList.add('show');
+            uploadBox.classList.add('has-image');
+        }
+
+        function removeImage() {
+            currentImageBase64 = null;
+            const preview = document.getElementById('uploadPreview');
+            const removeBtn = document.getElementById('uploadRemove');
+            const uploadBox = document.getElementById('uploadBox');
+            const fileInput = document.getElementById('fileInput');
+            
+            preview.src = '';
+            preview.classList.remove('show');
+            removeBtn.classList.remove('show');
+            uploadBox.classList.remove('has-image');
+            fileInput.value = '';
+        }
+
+        // Admin
+        function toggleAdmin() {
+            if (isAdmin) {
+                isAdmin = false;
+                document.getElementById('adminBtn').classList.remove('active');
+                document.getElementById('fabAdd').classList.remove('show');
+                renderStocks();
+                showToast('Mode user aktif', 'info');
+            } else {
+                document.getElementById('pwModal').classList.add('active');
+                document.getElementById('pwInput').value = '';
+                setTimeout(() => document.getElementById('pwInput').focus(), 100);
+                document.getElementById('pwError').classList.remove('show');
+            }
+        }
+
+        function checkPw() {
+            const input = document.getElementById('pwInput').value;
+            const correct = '1234';
+            
+            if (input === correct) {
+                isAdmin = true;
+                document.getElementById('adminBtn').classList.add('active');
+                document.getElementById('pwModal').classList.remove('active');
+                document.getElementById('fabAdd').classList.add('show');
+                renderStocks();
+                showToast('Mode admin aktif', 'success');
+            } else {
+                document.getElementById('pwError').classList.add('show');
+                document.getElementById('pwInput').value = '';
+                setTimeout(() => {
+                    document.getElementById('pwError').classList.remove('show');
+                }, 2000);
+            }
+        }
+
+        // Stock Modal
+        function openStockModal() {
+            editingId = null;
+            currentImageBase64 = null;
+            document.getElementById('modalTitle').textContent = 'Tambah Stock';
+            document.getElementById('stockForm').reset();
+            removeImage();
+            document.getElementById('stockModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeStockModal() {
+            document.getElementById('stockModal').classList.remove('active');
+            document.body.style.overflow = '';
+            editingId = null;
+            currentImageBase64 = null;
+        }
+
+        function editStock(id) {
+            const s = stocks.find(x => x.id === id);
+            if (!s) return;
+            
+            editingId = id;
+            document.getElementById('modalTitle').textContent = 'Edit Stock';
+            document.getElementById('itemName').value = s.name;
+            document.getElementById('itemPrice').value = s.price;
+            document.getElementById('itemStock').value = s.stock;
+            document.getElementById('itemDesc').value = s.desc;
+            document.getElementById('itemWA').value = s.wa;
+            
+            if (s.image && s.image.startsWith('data:image')) {
+                currentImageBase64 = s.image;
+                showPreview(s.image);
+                document.getElementById('itemImage').value = '';
+            } else {
+                removeImage();
+                document.getElementById('itemImage').value = s.image || '';
+            }
+            
+            document.getElementById('stockModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function saveStock(e) {
+            e.preventDefault();
+            
+            const linkImage = document.getElementById('itemImage').value;
+            const finalImage = currentImageBase64 || linkImage || 'https://via.placeholder.com/400x200/1f1f1f/666?text=No+Image';
+            
+            const data = {
+                name: document.getElementById('itemName').value,
+                price: parseInt(document.getElementById('itemPrice').value),
+                stock: parseInt(document.getElementById('itemStock').value),
+                image: finalImage,
+                desc: document.getElementById('itemDesc').value,
+                wa: document.getElementById('itemWA').value.replace(/\s/g, '').replace(/\+/g, '').replace(/-/g, '')
+            };
+
+            if (editingId) {
+                const idx = stocks.findIndex(s => s.id === editingId);
+                stocks[idx] = { ...stocks[idx], ...data };
+                showToast('Stock diperbarui', 'success');
+            } else {
+                const newId = stocks.length ? Math.max(...stocks.map(s => s.id)) + 1 : 1;
+                stocks.push({ id: newId, ...data });
+                showToast('Stock ditambahkan', 'success');
+            }
+
+            localStorage.setItem('stocks', JSON.stringify(stocks));
+            closeStockModal();
+            renderStocks();
+        }
+
+        // Custom Confirm Delete
+        function showConfirm(id) {
+            deleteId = id;
+            document.getElementById('confirmModal').classList.add('active');
+        }
+
+        function closeConfirm() {
+            document.getElementById('confirmModal').classList.remove('active');
+            deleteId = null;
+        }
+
+        function confirmDelete() {
+            if (!deleteId) return;
+            
+            stocks = stocks.filter(s => s.id !== deleteId);
+            localStorage.setItem('stocks', JSON.stringify(stocks));
+            renderStocks();
+            showToast('Stock dihapus', 'success');
+            closeConfirm();
+        }
+
+        // Toast
+        function showToast(msg, type = 'info') {
+            const t = document.getElementById('toast');
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle'
+            };
+            
+            t.innerHTML = `<i class="fas ${icons[type]}"></i><span>${msg}</span>`;
+            t.className = 'toast ' + type;
+            
+            requestAnimationFrame(() => {
+                t.classList.add('show');
+            });
+            
+            setTimeout(() => {
+                t.classList.remove('show');
+            }, 2500);
+        }
+
+     // Events
+        document.getElementById('pwInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkPw();
+        });
+
+        document.getElementById('pwModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                document.getElementById('pwModal').classList.remove('active');
+            }
+        });
+
+        document.getElementById('stockModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeStockModal();
+        });
+
+        document.getElementById('confirmModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeConfirm();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeStockModal();
+                closeConfirm();
+                document.getElementById('pwModal').classList.remove('active');
+            }
+        });
+
+        // Init
+        renderStocks();
+    </script>
+</body>
+</html>
+
+      
